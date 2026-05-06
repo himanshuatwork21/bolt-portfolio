@@ -8,3 +8,14 @@ export const heroQuery = `*[_type == "hero"][0]{
   "imageUrl": profileImage.asset->url,
   stats
 }`;
+export const projectsQuery = `*[_type == "project"]{
+  _id,
+  title,
+  description,
+  category,
+  color,
+  github,
+  demo,
+  tags,
+  "image": image.asset->url
+}`;
