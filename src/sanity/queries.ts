@@ -68,3 +68,17 @@ export const certificationQuery = `*[_type == "certificationSection"][0]{
     verifyLink
   }
 }`;
+export const aboutQuery = `*[_type == "about"][0]{
+  intro,
+  details,
+  facts[]{
+    label,
+    desc,
+    icon
+  },
+  timeline[]{
+    year,
+    title,
+    desc
+  }
+}`;
