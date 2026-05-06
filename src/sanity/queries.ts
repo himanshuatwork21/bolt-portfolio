@@ -19,3 +19,19 @@ export const projectsQuery = `*[_type == "project"]{
   tags,
   "image": image.asset->url
 }`;
+export const skillsQuery = `*[_type == "skillsSection"][0]{
+  title,
+  subtitle,
+
+  categories[]{
+    label,
+    icon,
+    color,
+    skills[]{
+      name,
+      level
+    }
+  },
+
+  tools
+}`;
