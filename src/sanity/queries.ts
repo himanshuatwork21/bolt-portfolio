@@ -82,3 +82,13 @@ export const aboutQuery = `*[_type == "about"][0]{
     desc
   }
 }`;
+export const blogQuery = `*[_type == "blog"] | order(_createdAt desc){
+  title,
+  excerpt,
+  tag,
+  date,
+  readTime,
+  color,
+  link,
+  "imageUrl": image.asset->url
+}`;
