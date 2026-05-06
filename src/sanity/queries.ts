@@ -104,3 +104,17 @@ export const contactInfoQuery = `*[_type == "contactInfo"][0]{
   location,
   availability
 }`;
+export const footerQuery = `
+*[_type == "footer"][0]{
+  brand,
+  subtitle,
+  stats[]{
+    value,
+    label
+  },
+  socials[]{
+    name,
+    url
+  }
+}
+`;
