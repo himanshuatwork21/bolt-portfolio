@@ -11,7 +11,6 @@ const NAV_ITEMS = [
   { label: 'Education', href: '#education' },
   { label: 'Blog', href: '#blog' },
   { label: 'Certifications', href: '#certifications' },
-  { label: 'Badges', href: '#badges' },
   { label: 'Contact', href: '#contact' },
 ];
 

@@ -92,3 +92,15 @@ export const blogQuery = `*[_type == "blog"] | order(_createdAt desc){
   link,
   "imageUrl": image.asset->url
 }`;
+export const socialQuery = `*[_type == "social"]{
+  label,
+  url,
+  color,
+  "iconUrl": icon.asset->url
+}`;
+
+export const contactInfoQuery = `*[_type == "contactInfo"][0]{
+  email,
+  location,
+  availability
+}`;
