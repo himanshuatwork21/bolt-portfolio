@@ -1,110 +1,148 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send } from 'lucide-react';
+import { Mail, Github, Linkedin, Send, MessageSquare } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 import SectionHeader from './SectionHeader';
-import { client, writeClient } from '../sanity/client';
-import { socialQuery, contactInfoQuery } from '../sanity/queries';
+
+const SOCIALS = [
+  { icon: Github, label: 'GitHub', url: '#', color: '#00ff88' },
+  { icon: Linkedin, label: 'LinkedIn', url: '#', color: '#00d4ff' },
+  { icon: Mail, label: 'Email', url: 'mailto:himanshu@example.com', color: '#00ffcc' },
+  { icon: MessageSquare, label: 'Telegram', url: '#', color: '#00ff88' },
+];
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [socials, setSocials] = useState<any[]>([]);
-  const [info, setInfo] = useState<any>(null);
-
-  useEffect(() => {
-    client.fetch(socialQuery).then(setSocials);
-    client.fetch(contactInfoQuery).then(setInfo);
-  }, []);
-
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      await writeClient.create({
-        _type: 'contactMessage',
-        ...formData,
-      });
+      await emailjs.send(
+        'service_r2q0kzj',     // 🔁 replace
+        'template_t11nb6s',    // 🔁 replace
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+        },
+        'z1LQMArxH5DAwDhht'      // 🔁 replace
+      );
 
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
 
       setTimeout(() => setSubmitted(false), 3000);
     } catch (err) {
-      console.error(err);
-      alert('Error sending message');
+      console.error('EmailJS Error:', err);
     }
+
+    setLoading(false);
   };
 
   return (
-    <section id="contact" className="relative py-24">
-      <div className="max-w-4xl mx-auto px-6">
-        <SectionHeader title="Contact Me" tag="// GET_IN_TOUCH" />
+    <section id="contact" className="relative py-24 overflow-hidden">
+      <div className="absolute inset-0 cyber-grid opacity-25 pointer-events-none" />
+
+      <div className="relative z-10 max-w-4xl mx-auto px-6">
+        <SectionHeader
+          tag="// GET_IN_TOUCH"
+          title="Contact Me"
+          subtitle="Have a security question or collaboration opportunity? Let's connect!"
+        />
 
         <div className="grid md:grid-cols-2 gap-12">
-
+          
           {/* FORM */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="glass rounded-xl p-8"
+          >
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-            <input
-              placeholder="Name"
-              value={formData.name}
-              onChange={e => setFormData({ ...formData, name: e.target.value })}
-              className="p-3 bg-black/20 border rounded"
-            />
+              {/* NAME */}
+              <input
+                type="text"
+                placeholder="Your name"
+                value={formData.name}
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
+                required
+                className="input"
+              />
 
-            <input
-              placeholder="Email"
-              value={formData.email}
-              onChange={e => setFormData({ ...formData, email: e.target.value })}
-              className="p-3 bg-black/20 border rounded"
-            />
+              {/* EMAIL */}
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={formData.email}
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                required
+                className="input"
+              />
 
-            <textarea
-              placeholder="Message"
-              value={formData.message}
-              onChange={e => setFormData({ ...formData, message: e.target.value })}
-              className="p-3 bg-black/20 border rounded"
-            />
+              {/* MESSAGE */}
+              <textarea
+                placeholder="Your message..."
+                value={formData.message}
+                onChange={e => setFormData({ ...formData, message: e.target.value })}
+                required
+                rows={4}
+                className="input resize-none"
+              />
 
-            <button className="bg-green-400 p-3 flex items-center justify-center gap-2">
-              <Send size={14} />
-              {submitted ? 'Sent!' : 'Send Message'}
-            </button>
-          </form>
+              {/* BUTTON */}
+              <motion.button
+                type="submit"
+                disabled={loading}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="btn-primary flex items-center justify-center gap-2"
+              >
+                <Send size={14} />
+                {loading ? 'Sending...' : submitted ? 'Sent ✅' : 'Send Message'}
+              </motion.button>
 
-          {/* RIGHT SIDE */}
-          <div className="flex flex-col gap-6">
+            </form>
+          </motion.div>
 
-            {/* SOCIALS */}
+          {/* SOCIALS */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col gap-8"
+          >
             <div>
-              <h3 className="text-green-400 mb-3">CONNECT WITH ME</h3>
+              <h3 className="section-title">CONNECT WITH ME</h3>
 
               <div className="grid grid-cols-2 gap-3">
-                {socials.map((s, i) => (
-                  <a
-                    key={i}
-                    href={s.url}
+                {SOCIALS.map((social, i) => (
+                  <motion.a
+                    key={social.label}
+                    href={social.url}
                     target="_blank"
-                    className="p-4 border rounded flex flex-col items-center gap-2"
+                    rel="noopener noreferrer"
+                    className="glass p-4 rounded-lg flex flex-col items-center gap-2"
                   >
-                    <img src={s.iconUrl} className="w-8 h-8" />
-                    <span>{s.label}</span>
-                  </a>
+                    <social.icon size={18} style={{ color: social.color }} />
+                    <span className="text-xs text-white">{social.label}</span>
+                  </motion.a>
                 ))}
               </div>
             </div>
 
             {/* QUICK INFO */}
-            {info && (
-              <div className="p-6 border rounded">
-                <p>Email: {info.email}</p>
-                <p>Location: {info.location}</p>
-                <p>{info.availability}</p>
-              </div>
-            )}
+            <div className="glass p-6 rounded-lg">
+              <p className="text-sm text-white">himanshu@example.com</p>
+              <p className="text-sm text-white">New Delhi, India</p>
+            </div>
 
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

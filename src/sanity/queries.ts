@@ -106,15 +106,10 @@ export const contactInfoQuery = `*[_type == "contactInfo"][0]{
 }`;
 export const footerQuery = `
 *[_type == "footer"][0]{
-  brand,
-  subtitle,
-  stats[]{
-    value,
-    label
-  },
-  socials[]{
-    name,
-    url
-  }
+  logoText,
+  tagline,
+  stats,
+  socials,
+  copyright
 }
 `;
