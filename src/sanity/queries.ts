@@ -35,3 +35,16 @@ export const skillsQuery = `*[_type == "skillsSection"][0]{
 
   tools
 }`;
+export const experienceQuery = `*[_type == "experienceSection"][0]{
+  title,
+  subtitle,
+  experiences[]{
+    role,
+    company,
+    location,
+    period,
+    type,
+    color,
+    points
+  }
+}`;
