@@ -74,6 +74,7 @@ function ProfileShowcase({ imageUrl, size }: any) {
         <div className="absolute inset-8 rounded-full overflow-hidden border-2 border-[#00ff88]">
           <img
             src={imageUrl}
+            alt="profile"
             className="w-full h-full object-cover"
           />
         </div>
@@ -100,7 +101,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="min-h-screen flex items-center">
+    <section id="home" className="min-h-screen flex items-center">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 w-full px-6">
 
         {/* LEFT */}
@@ -119,11 +120,59 @@ export default function Hero() {
             {typedText} |
           </div>
 
-          <div className="flex gap-4 mt-6">
-            <button className="bg-green-400 text-black px-4 py-2">Projects</button>
-            <button className="border border-green-400 px-4 py-2">Resume</button>
+          {/* 🔥 STATIC BUTTONS */}
+          <div className="flex flex-wrap gap-4 mt-6">
+
+            {/* Projects */}
+            <a
+              href="#projects"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 px-6 py-3 rounded font-semibold text-sm tracking-wider transition-all duration-300 hover:-translate-y-0.5"
+              style={{
+                background: 'linear-gradient(135deg, #00ff88, #00d4ff)',
+                color: '#040a0f',
+                boxShadow: '0 4px 20px rgba(0,255,136,0.3)',
+              }}
+            >
+              <Code2 size={16} />
+              Projects
+            </a>
+
+            {/* Resume */}
+            <a
+              href="/resume.pdf" // 👉 replace with your file
+              target="_blank"
+              className="flex items-center gap-2 px-6 py-3 rounded font-semibold text-sm tracking-wider text-[#00ff88] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#00ff88]/10"
+              style={{
+                border: '1px solid rgba(0,255,136,0.4)',
+              }}
+            >
+              <Download size={16} />
+              Resume
+            </a>
+
+            {/* Contact */}
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 px-6 py-3 rounded font-semibold text-sm tracking-wider text-[#00d4ff] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#00d4ff]/10"
+              style={{
+                border: '1px solid rgba(0,212,255,0.3)',
+              }}
+            >
+              <Mail size={16} />
+              Contact Me
+            </a>
+
           </div>
 
+          {/* STATS */}
           <div className="flex gap-6 mt-6">
             {heroData.stats?.map((stat: any) => (
               <div key={stat.label}>
@@ -140,6 +189,16 @@ export default function Hero() {
           size={heroData.profileSize}
         />
 
+      </div>
+
+      {/* Scroll indicator */}
+      <div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer"
+        onClick={() =>
+          document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
+        }
+      >
+        <ChevronDown className="text-green-400 animate-bounce" />
       </div>
     </section>
   );
