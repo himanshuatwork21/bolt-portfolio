@@ -52,3 +52,19 @@ export const educationQuery = `*[_type == "education"][0]{
   formal,
   sections
 }`;
+export const certificationQuery = `*[_type == "certificationSection"][0]{
+  certifications[]{
+    name,
+    issuer,
+    year,
+    color,
+    verifyLink,
+    "imageUrl": image.asset->url
+  },
+  achievements[]{
+    badge,
+    title,
+    color,
+    verifyLink
+  }
+}`;
