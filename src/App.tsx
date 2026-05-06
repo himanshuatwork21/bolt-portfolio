@@ -17,8 +17,7 @@ function App() {
     <div className="relative w-full bg-[#040a0f] text-white overflow-x-hidden">
       <ParticleBackground />
       <CyberCursor />
-
-      <Navbar />
+      <Navbar/>
       <Hero />
       <About />
       <Skills />
@@ -29,6 +28,9 @@ function App() {
       <Certifications />
       <Contact />
       <Footer />
+
+     
+      
     </div>
   );
 }
