@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, ChevronUp } from 'lucide-react';
-import { client } from '../sanityClient';
-import { footerQuery } from '../queries';
-
+import { client } from '../sanity/sanityClient';
+import { footerQuery } from '../sanity/queries';
 const iconMap: any = {
   github: Github,
   linkedin: Linkedin,
