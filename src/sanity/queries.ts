@@ -48,3 +48,7 @@ export const experienceQuery = `*[_type == "experienceSection"][0]{
     points
   }
 }`;
+export const educationQuery = `*[_type == "education"][0]{
+  formal,
+  sections
+}`;
