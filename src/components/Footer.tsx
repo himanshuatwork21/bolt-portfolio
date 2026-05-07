@@ -1,59 +1,103 @@
+// Footer.tsx
+
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, ChevronUp } from 'lucide-react';
+import {
+  Github,
+  Linkedin,
+  Mail,
+  ChevronUp,
+} from 'lucide-react';
+
 import { client } from '../sanity/sanityClient';
 import { footerQuery } from '../sanity/queries';
-const iconMap: any = {
+
+const iconMap: Record<string, any> = {
   github: Github,
   linkedin: Linkedin,
-  email: Mail,
+  mail: Mail,
 };
 
 export default function Footer() {
-  const [data, setData] = useState<any>(null);
+  const [footer, setFooter] = useState<any>(null);
 
   useEffect(() => {
-    client.fetch(footerQuery).then(setData);
+    client.fetch(footerQuery).then((data) => {
+      setFooter(data);
+    });
   }, []);
 
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
-  if (!data) return null;
+  if (!footer) return null;
 
   return (
     <footer className="relative py-12 border-t border-white/5 overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(180deg, #040a0f 0%, #030608 100%)',
+        }}
+      />
 
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
         {/* TOP */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/5">
-
-          {/* LOGO */}
-          <motion.div className="flex items-center gap-2">
+          
+          {/* LEFT */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="flex items-center gap-2"
+          >
             <span className="font-orbitron text-sm font-bold text-white tracking-widest">
-              {data.logoText?.split('.')[0]}
-              <span className="text-[#00ff88]">.{data.logoText?.split('.')[1]}</span>
+              {footer.logoText}
             </span>
+
             <span className="text-xs text-[#8ab4c8] font-mono-cyber">
-              {data.tagline}
+              {footer.tagline}
             </span>
           </motion.div>
 
-          {/* STATS */}
-          <div className="flex items-center gap-6">
-            {data.stats?.map((stat: any, i: number) => (
+          {/* CENTER */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex items-center gap-6"
+          >
+            {footer.stats?.map((stat: any, i: number) => (
               <div key={i} className="text-center">
                 <p className="font-orbitron text-sm font-bold gradient-text">
                   {stat.value}
                 </p>
-                <p className="text-xs text-[#8ab4c8]">{stat.label}</p>
+
+                <p
+                  className="text-xs text-[#8ab4c8]"
+                  style={{ fontFamily: 'Rajdhani, sans-serif' }}
+                >
+                  {stat.label}
+                </p>
               </div>
             ))}
-          </div>
+          </motion.div>
 
-          {/* SOCIALS */}
-          <div className="flex items-center gap-3">
-            {data.socials?.map((social: any, i: number) => {
-              const Icon = iconMap[social.platform.toLowerCase()] || Github;
+          {/* RIGHT */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="flex items-center gap-3"
+          >
+            {footer.socials?.map((social: any, i: number) => {
+              const Icon = iconMap[social.icon];
 
               return (
                 <motion.a
@@ -61,38 +105,53 @@ export default function Footer() {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded border flex items-center justify-center"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-8 h-8 rounded border transition-all duration-200 flex items-center justify-center"
                   style={{
                     borderColor: social.color,
                     color: social.color,
                   }}
                 >
-                  <Icon size={14} />
+                  {Icon && <Icon size={14} />}
                 </motion.a>
               );
             })}
-          </div>
+          </motion.div>
         </div>
 
         {/* BOTTOM */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8">
-          <p className="text-xs text-[#8ab4c8]">
-            {data.copyright}
-          </p>
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8"
+        >
+          <div className="text-center sm:text-left">
+            <p
+              className="text-xs text-[#8ab4c8]"
+              style={{ fontFamily: 'Rajdhani, sans-serif' }}
+            >
+              {footer.copyright}
+            </p>
+          </div>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
             onClick={scrollToTop}
-            className="flex items-center gap-2 px-4 py-2 rounded text-xs"
+            className="flex items-center gap-2 px-4 py-2 rounded text-xs font-semibold tracking-widest transition-all duration-200"
             style={{
               background: 'rgba(0,255,136,0.1)',
               border: '1px solid rgba(0,255,136,0.3)',
               color: '#00ff88',
+              fontFamily: 'Rajdhani, sans-serif',
             }}
           >
             Back to Top
             <ChevronUp size={12} />
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </div>
     </footer>
   );

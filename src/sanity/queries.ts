@@ -92,24 +92,43 @@ export const blogQuery = `*[_type == "blog"] | order(_createdAt desc){
   link,
   "imageUrl": image.asset->url
 }`;
-export const socialQuery = `*[_type == "social"]{
+export const contactPageQuery = `
+*[_type == "contactPage"][0]{
+  title,
+  subtitle
+}
+`;
+
+export const socialLinksQuery = `
+*[_type == "social"]{
   label,
   url,
   color,
-  "iconUrl": icon.asset->url
-}`;
+  icon
+}
+`;
 
-export const contactInfoQuery = `*[_type == "contactInfo"][0]{
-  email,
-  location,
-  availability
-}`;
+export const quickInfoQuery = `
+*[_type == "quickInfo"]{
+  label,
+  value
+}
+`;
 export const footerQuery = `
 *[_type == "footer"][0]{
   logoText,
   tagline,
-  stats,
-  socials,
-  copyright
+  copyright,
+
+  stats[]{
+    label,
+    value
+  },
+
+  socials[]{
+    icon,
+    url,
+    color
+  }
 }
 `;
