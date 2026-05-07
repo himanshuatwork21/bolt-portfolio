@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Mail, Github, Linkedin, Send, MessageSquare } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 
-import { client } from '../sanity/sanityClient';
+import { client } from '../sanity/client';
 import {
   contactPageQuery,
   socialLinksQuery,
