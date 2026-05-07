@@ -100,11 +100,12 @@ export const contactPageQuery = `
 `;
 
 export const socialLinksQuery = `
-*[_type == "socialLink"]{
+*[_type == "social"]{
   label,
   url,
   color,
-  "iconUrl": icon.asset->url
+  icon,
+  "iconUrl": iconImage.asset->url
 }
 `;
 
