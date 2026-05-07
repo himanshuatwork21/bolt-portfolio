@@ -7,17 +7,15 @@ import { client } from '../sanity/client';
 import { blogQuery } from '../sanity/queries';
 
 interface BlogPost {
-  title: string;
-  excerpt: string;
-  tag: string;
-  date: string;
-  readTime: string;
-  color: string;
-  link: string;
-  imageUrl: string;
+  title?: string;
+  excerpt?: string;
+  tag?: string;
+  date?: string;
+  readTime?: string;
+  color?: string;
+  link?: string;
+  imageUrl?: string;
 }
-
-const FALLBACK_POSTS: BlogPost[] = [];
 
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -26,12 +24,18 @@ export default function Blog() {
   useEffect(() => {
     client
       .fetch(blogQuery)
-      .then((data: BlogPost[]) => {
-        setPosts(data || FALLBACK_POSTS);
+      .then((data) => {
+        console.log('BLOG DATA:', data);
+
+        if (Array.isArray(data)) {
+          setPosts(data);
+        } else {
+          setPosts([]);
+        }
       })
       .catch((err) => {
-        console.error('Sanity fetch error:', err);
-        setPosts(FALLBACK_POSTS);
+        console.error('BLOG FETCH ERROR:', err);
+        setPosts([]);
       })
       .finally(() => {
         setLoading(false);
@@ -68,42 +72,48 @@ export default function Blog() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post, i) => (
               <motion.a
-                key={post.title}
-                href={post.link}
+                key={i}
+                href={post.link || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="group glass rounded-xl overflow-hidden cyber-card flex flex-col cursor-pointer hover:scale-[1.02] transition-all duration-300"
+                className="group glass rounded-xl overflow-hidden cyber-card flex flex-col hover:scale-[1.02] transition-all duration-300"
                 style={{
-                  border: `1px solid ${post.color}14`,
+                  border: `1px solid ${post.color || '#00ff88'}14`,
                 }}
               >
                 {/* Image */}
-                <div className="relative h-40 overflow-hidden">
-                  <img
-                    src={post.imageUrl}
-                    alt={post.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    style={{
-                      filter: 'brightness(0.4) saturate(0.5)',
-                    }}
-                  />
+                <div className="relative h-40 overflow-hidden bg-[#071018]">
+                  {post.imageUrl ? (
+                    <img
+                      src={post.imageUrl}
+                      alt={post.title || 'Blog image'}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      style={{
+                        filter: 'brightness(0.4) saturate(0.5)',
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[#8ab4c8] text-sm">
+                      No Image
+                    </div>
+                  )}
 
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0d1f35]" />
 
                   <span
-                    className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-mono-cyber"
+                    className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs"
                     style={{
-                      background: `${post.color}18`,
-                      border: `1px solid ${post.color}35`,
-                      color: post.color,
+                      background: `${post.color || '#00ff88'}18`,
+                      border: `1px solid ${post.color || '#00ff88'}35`,
+                      color: post.color || '#00ff88',
                     }}
                   >
                     <Tag size={10} />
-                    {post.tag}
+                    {post.tag || 'Blog'}
                   </span>
                 </div>
 
@@ -113,11 +123,9 @@ export default function Blog() {
                     className="text-white font-semibold leading-snug group-hover:text-[#00ff88] transition-colors"
                     style={{
                       fontFamily: 'Rajdhani, sans-serif',
-                      fontSize: '1rem',
-                      fontWeight: 700,
                     }}
                   >
-                    {post.title}
+                    {post.title || 'Untitled Blog'}
                   </h3>
 
                   <p
@@ -126,36 +134,23 @@ export default function Blog() {
                       fontFamily: 'Rajdhani, sans-serif',
                     }}
                   >
-                    {post.excerpt}
+                    {post.excerpt || 'No description available.'}
                   </p>
 
                   <div className="flex items-center justify-between pt-2 border-t border-white/5">
                     <div className="flex items-center gap-3 text-xs text-[#8ab4c8]">
-                      <span
-                        style={{
-                          fontFamily: 'Rajdhani, sans-serif',
-                        }}
-                      >
-                        {post.date}
-                      </span>
+                      <span>{post.date || 'No Date'}</span>
 
                       <span className="flex items-center gap-1">
                         <Clock size={10} />
-                        <span
-                          style={{
-                            fontFamily: 'Rajdhani, sans-serif',
-                          }}
-                        >
-                          {post.readTime}
-                        </span>
+                        <span>{post.readTime || '0 min'}</span>
                       </span>
                     </div>
 
                     <span
                       className="flex items-center gap-1 text-xs font-medium transition-all duration-200 group-hover:gap-2"
                       style={{
-                        color: post.color,
-                        fontFamily: 'Rajdhani, sans-serif',
+                        color: post.color || '#00ff88',
                       }}
                     >
                       Read <ArrowRight size={12} />
