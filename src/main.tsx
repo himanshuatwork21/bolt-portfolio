@@ -1,23 +1,7 @@
-import { useEffect, useState } from 'react';
-import Footer from './components/Footer';
+import { createRoot } from 'react-dom/client';
+import App from './App';
+import './index.css';
 
-import { client } from './sanity/client';
-import { footerQuery } from './sanity/queries';
-
-export default function App() {
-  const [footerData, setFooterData] = useState(null);
-
-  useEffect(() => {
-    client.fetch(footerQuery)
-      .then(setFooterData)
-      .catch(console.error);
-  }, []);
-
-  return (
-    <>
-      {/* other sections */}
-      
-      {footerData && <Footer data={footerData} />}
-    </>
-  );
-}
+createRoot(document.getElementById('root')!).render(
+  <App />
+);

@@ -9,7 +9,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 
-import { client } from '../sanity/sanityClient';
+import { client } from '../sanity/client';
 import { footerQuery } from '../sanity/queries';
 
 const iconMap: Record<string, any> = {
@@ -22,9 +22,14 @@ export default function Footer() {
   const [footer, setFooter] = useState<any>(null);
 
   useEffect(() => {
-    client.fetch(footerQuery).then((data) => {
-      setFooter(data);
-    });
+    client
+      .fetch(footerQuery)
+      .then((data) => {
+        setFooter(data);
+      })
+      .catch((err) => {
+        console.error('Footer fetch error:', err);
+      });
   }, []);
 
   const scrollToTop = () => {
@@ -71,17 +76,22 @@ export default function Footer() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-center gap-6"
+            className="flex items-center gap-6 flex-wrap justify-center"
           >
             {footer.stats?.map((stat: any, i: number) => (
-              <div key={i} className="text-center">
+              <div
+                key={i}
+                className="text-center"
+              >
                 <p className="font-orbitron text-sm font-bold gradient-text">
                   {stat.value}
                 </p>
 
                 <p
                   className="text-xs text-[#8ab4c8]"
-                  style={{ fontFamily: 'Rajdhani, sans-serif' }}
+                  style={{
+                    fontFamily: 'Rajdhani, sans-serif',
+                  }}
                 >
                   {stat.label}
                 </p>
@@ -97,7 +107,7 @@ export default function Footer() {
             className="flex items-center gap-3"
           >
             {footer.socials?.map((social: any, i: number) => {
-              const Icon = iconMap[social.icon];
+              const Icon = iconMap[social.icon?.toLowerCase()];
 
               return (
                 <motion.a
@@ -111,6 +121,24 @@ export default function Footer() {
                   style={{
                     borderColor: social.color,
                     color: social.color,
+                  }}
+                  onMouseEnter={(e) => {
+                    (
+                      e.currentTarget as HTMLElement
+                    ).style.boxShadow = `0 0 15px ${social.color}40`;
+
+                    (
+                      e.currentTarget as HTMLElement
+                    ).style.background = `${social.color}10`;
+                  }}
+                  onMouseLeave={(e) => {
+                    (
+                      e.currentTarget as HTMLElement
+                    ).style.boxShadow = 'none';
+
+                    (
+                      e.currentTarget as HTMLElement
+                    ).style.background = 'transparent';
                   }}
                 >
                   {Icon && <Icon size={14} />}
@@ -130,7 +158,9 @@ export default function Footer() {
           <div className="text-center sm:text-left">
             <p
               className="text-xs text-[#8ab4c8]"
-              style={{ fontFamily: 'Rajdhani, sans-serif' }}
+              style={{
+                fontFamily: 'Rajdhani, sans-serif',
+              }}
             >
               {footer.copyright}
             </p>
@@ -146,6 +176,25 @@ export default function Footer() {
               border: '1px solid rgba(0,255,136,0.3)',
               color: '#00ff88',
               fontFamily: 'Rajdhani, sans-serif',
+            }}
+            onMouseEnter={(e) => {
+              (
+                e.currentTarget as HTMLElement
+              ).style.background = 'rgba(0,255,136,0.2)';
+
+              (
+                e.currentTarget as HTMLElement
+              ).style.boxShadow =
+                '0 0 20px rgba(0,255,136,0.2)';
+            }}
+            onMouseLeave={(e) => {
+              (
+                e.currentTarget as HTMLElement
+              ).style.background = 'rgba(0,255,136,0.1)';
+
+              (
+                e.currentTarget as HTMLElement
+              ).style.boxShadow = 'none';
             }}
           >
             Back to Top
