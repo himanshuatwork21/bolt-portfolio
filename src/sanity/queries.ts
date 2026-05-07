@@ -104,11 +104,9 @@ export const socialLinksQuery = `
   label,
   url,
   color,
-  icon,
   "iconUrl": iconImage.asset->url
 }
 `;
-
 export const quickInfoQuery = `
 *[_type == "quickInfo"]{
   label,
