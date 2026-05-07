@@ -103,8 +103,8 @@ export const socialLinksQuery = `
 *[_type == "socialLink"]{
   label,
   url,
-  icon,
-  color
+  color,
+  "iconUrl": icon.asset->url
 }
 `;
 
