@@ -6,16 +6,36 @@ import SectionHeader from './SectionHeader';
 import { client } from '../sanity/client';
 import { blogQuery } from '../sanity/queries';
 
-const FALLBACK_POSTS = [];
+interface BlogPost {
+  title: string;
+  excerpt: string;
+  tag: string;
+  date: string;
+  readTime: string;
+  color: string;
+  link: string;
+  imageUrl: string;
+}
+
+const FALLBACK_POSTS: BlogPost[] = [];
 
 export default function Blog() {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     client
       .fetch(blogQuery)
-      .then(data => setPosts(data))
-      .catch(() => setPosts(FALLBACK_POSTS));
+      .then((data: BlogPost[]) => {
+        setPosts(data || FALLBACK_POSTS);
+      })
+      .catch((err) => {
+        console.error('Sanity fetch error:', err);
+        setPosts(FALLBACK_POSTS);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -23,7 +43,8 @@ export default function Blog() {
       <div
         className="absolute left-0 top-1/3 w-80 h-80 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(0,212,255,0.04) 0%, transparent 70%)',
+          background:
+            'radial-gradient(circle, rgba(0,212,255,0.04) 0%, transparent 70%)',
           filter: 'blur(40px)',
         }}
       />
@@ -35,73 +56,116 @@ export default function Blog() {
           subtitle="CTF writeups, security research, and hacking tutorials."
         />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post, i) => (
-            <motion.a
-              key={post.title}
-              href={post.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="group glass rounded-xl overflow-hidden cyber-card flex flex-col cursor-pointer hover:scale-[1.02] transition-all"
-              style={{ border: `1px solid ${post.color}14` }}
-            >
-              {/* Image */}
-              <div className="relative h-40 overflow-hidden">
-                <img
-                  src={post.imageUrl}
-                  alt={post.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  style={{ filter: 'brightness(0.4) saturate(0.5)' }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0d1f35]" />
+        {loading ? (
+          <div className="text-center text-[#8ab4c8] py-10">
+            Loading blogs...
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="text-center text-[#8ab4c8] py-10">
+            No blog posts found.
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts.map((post, i) => (
+              <motion.a
+                key={post.title}
+                href={post.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="group glass rounded-xl overflow-hidden cyber-card flex flex-col cursor-pointer hover:scale-[1.02] transition-all duration-300"
+                style={{
+                  border: `1px solid ${post.color}14`,
+                }}
+              >
+                {/* Image */}
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={post.imageUrl}
+                    alt={post.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    style={{
+                      filter: 'brightness(0.4) saturate(0.5)',
+                    }}
+                  />
 
-                <span
-                  className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs"
-                  style={{
-                    background: `${post.color}18`,
-                    border: `1px solid ${post.color}35`,
-                    color: post.color,
-                  }}
-                >
-                  <Tag size={10} />
-                  {post.tag}
-                </span>
-              </div>
-
-              {/* Content */}
-              <div className="p-5 flex flex-col gap-3 flex-1">
-                <h3 className="text-white font-semibold group-hover:text-[#00ff88] transition">
-                  {post.title}
-                </h3>
-
-                <p className="text-[#8ab4c8] text-sm flex-1">
-                  {post.excerpt}
-                </p>
-
-                <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                  <div className="flex items-center gap-3 text-xs text-[#8ab4c8]">
-                    <span>{post.date}</span>
-                    <span className="flex items-center gap-1">
-                      <Clock size={10} />
-                      {post.readTime}
-                    </span>
-                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0d1f35]" />
 
                   <span
-                    className="flex items-center gap-1 text-xs font-medium group-hover:gap-2 transition-all"
-                    style={{ color: post.color }}
+                    className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-mono-cyber"
+                    style={{
+                      background: `${post.color}18`,
+                      border: `1px solid ${post.color}35`,
+                      color: post.color,
+                    }}
                   >
-                    Read <ArrowRight size={12} />
+                    <Tag size={10} />
+                    {post.tag}
                   </span>
                 </div>
-              </div>
-            </motion.a>
-          ))}
-        </div>
+
+                {/* Content */}
+                <div className="p-5 flex flex-col gap-3 flex-1">
+                  <h3
+                    className="text-white font-semibold leading-snug group-hover:text-[#00ff88] transition-colors"
+                    style={{
+                      fontFamily: 'Rajdhani, sans-serif',
+                      fontSize: '1rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {post.title}
+                  </h3>
+
+                  <p
+                    className="text-[#8ab4c8] text-sm leading-relaxed flex-1"
+                    style={{
+                      fontFamily: 'Rajdhani, sans-serif',
+                    }}
+                  >
+                    {post.excerpt}
+                  </p>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                    <div className="flex items-center gap-3 text-xs text-[#8ab4c8]">
+                      <span
+                        style={{
+                          fontFamily: 'Rajdhani, sans-serif',
+                        }}
+                      >
+                        {post.date}
+                      </span>
+
+                      <span className="flex items-center gap-1">
+                        <Clock size={10} />
+                        <span
+                          style={{
+                            fontFamily: 'Rajdhani, sans-serif',
+                          }}
+                        >
+                          {post.readTime}
+                        </span>
+                      </span>
+                    </div>
+
+                    <span
+                      className="flex items-center gap-1 text-xs font-medium transition-all duration-200 group-hover:gap-2"
+                      style={{
+                        color: post.color,
+                        fontFamily: 'Rajdhani, sans-serif',
+                      }}
+                    >
+                      Read <ArrowRight size={12} />
+                    </span>
+                  </div>
+                </div>
+              </motion.a>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
